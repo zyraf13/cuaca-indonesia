@@ -1,0 +1,129 @@
+:root{
+  --bg:#070b16; --line:rgba(255,255,255,.16);
+  --txt:#f4f8ff; --dim:#c3cfdf; --accent:#67e8f9; --warm:#fbbf24; --rain:#7dd3fc;
+  --radius:16px;
+  /* Glassmorphism. Tinted dark, not white: white 15% + white text over a bright 3D sky fails
+     the contrast rule (§1), which outranks the literal sample values. */
+  --glass-bg:rgba(9,15,29,.52);
+  --glass-border:rgba(255,255,255,.22);
+  --glass-blur:14px;
+  --glass-shadow:0 8px 32px 0 rgba(0,0,0,.32);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  background:
+    radial-gradient(1100px 620px at 78% -12%, #1d3b6b 0%, transparent 62%),
+    radial-gradient(820px 520px at 4% 8%, #12203c 0%, transparent 60%),
+    var(--bg);
+  color:var(--txt);
+  font:15px/1.5 ui-sans-serif,system-ui,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Background layer: full-viewport 3D, fixed so panels scroll over it */
+#scene{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;cursor:grab;touch-action:pan-y}
+#scene:active{cursor:grabbing}
+.scene-note,.fallback{
+  position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:2;
+  background:rgba(7,11,22,.9);border:1px solid var(--line);border-radius:10px;
+  padding:8px 12px;font-size:12px;color:var(--dim);white-space:nowrap;
+}
+
+.app{
+  position:relative;z-index:1;max-width:1180px;margin:0 auto;
+  padding:22px 18px 30px;display:flex;flex-direction:column;gap:16px;min-height:100vh;
+}
+
+.glass{
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(135%);
+  backdrop-filter:blur(var(--glass-blur)) saturate(135%);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius);
+  box-shadow:var(--glass-shadow);
+  text-shadow:0 1px 2px rgba(0,0,0,.5);
+}
+/* no blur support -> solid panel, still legible */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .glass{background:rgba(18,24,38,.9)}
+}
+/* perf escape hatch: main.js adds .reduce-blur when measured FPS < 20 */
+html.reduce-blur .glass{
+  -webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(8,13,24,.86);
+}
+
+.bar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:12px 14px}
+.brand{display:flex;gap:12px;align-items:center}
+.brand h1{margin:0;font-size:19px;letter-spacing:-.2px}
+.brand p{margin:1px 0 0;color:#d5e0ef;font-size:12.5px}
+.dot{width:11px;height:11px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 5px rgba(103,232,249,.12),0 0 18px var(--accent)}
+.pickers{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.pickers label{display:flex;flex-direction:column;gap:5px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#dbe5f2}
+select,.ghost{
+  font:inherit;color:var(--txt);background:rgba(8,14,26,.72);border:1px solid var(--line);
+  border-radius:10px;padding:9px 11px;min-width:180px;max-width:260px;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+}
+select:focus-visible,.ghost:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.ghost{min-width:0;cursor:pointer;background:rgba(103,232,249,.18);border-color:rgba(103,232,249,.55);color:var(--accent);font-weight:600}
+.ghost:hover{background:rgba(103,232,249,.26)}
+.ghost[disabled]{opacity:.45;cursor:progress}
+
+.hero{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:16px;padding:18px}
+.hero-data{display:flex;flex-direction:column;justify-content:center;padding:6px 4px}
+.lokasi{margin:0;color:var(--dim);font-size:13px;min-height:38px}
+.temp{display:flex;align-items:flex-start;gap:4px;font-variant-numeric:tabular-nums;line-height:.95;margin:4px 0 2px}
+.temp #suhu{font-size:clamp(54px,9vw,86px);font-weight:700;letter-spacing:-3px}
+.temp .deg{font-size:26px;font-weight:600;color:var(--dim);margin-top:10px}
+.kondisi{margin:0;font-size:18px;font-weight:600}
+.waktu{margin:4px 0 0;color:var(--dim);font-size:13px}
+.status{min-height:20px;margin-top:10px;font-size:12.5px;color:var(--warm)}
+.status.err{color:#fca5a5}
+.hero-side{display:flex;align-items:flex-end;justify-content:flex-end}
+.hint{margin:0;font-size:12px;color:#e3ebf6;max-width:230px;text-align:right;text-shadow:0 1px 3px rgba(0,0,0,.65)}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px}
+.card{
+  background:rgba(9,15,29,.38);border:1px solid var(--glass-border);border-radius:13px;padding:11px 13px;
+  -webkit-backdrop-filter:blur(calc(var(--glass-blur) - 4px));backdrop-filter:blur(calc(var(--glass-blur) - 4px));
+  box-shadow:0 6px 20px rgba(0,0,0,.24);text-shadow:0 1px 2px rgba(0,0,0,.45);
+}
+html.reduce-blur .card{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(8,13,24,.82)}
+.card span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--dim)}
+.card b{display:block;margin-top:4px;font-size:19px;font-weight:650;font-variant-numeric:tabular-nums}
+.card small{color:#b3bfd1;font-weight:400;font-size:12px;line-height:1.35;margin-top:2px}
+
+.timeline{padding:12px}
+.days{display:flex;gap:8px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none}
+.days::-webkit-scrollbar{display:none}
+.day{
+  font:inherit;font-size:12.5px;font-weight:600;color:#d3dedf;cursor:pointer;
+  background:rgba(8,14,26,.62);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:6px 13px;white-space:nowrap;
+}
+.day[aria-selected="true"]{color:#06121f;background:var(--accent);border-color:transparent;text-shadow:none}
+.slots{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.slot{
+  font:inherit;text-align:left;cursor:pointer;flex:0 0 auto;width:96px;
+  background:rgba(8,14,26,.62);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:9px 10px;color:var(--txt);
+}
+.slot:hover{background:rgba(255,255,255,.13)}
+.slot[aria-current="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset;background:rgba(103,232,249,.2)}
+.slot time{display:block;font-size:12px;color:#d3dedf}
+.slot strong{display:block;font-size:17px;margin-top:2px;font-variant-numeric:tabular-nums}
+.slot em{display:block;font-style:normal;font-size:11px;color:#cbd6e4;margin-top:2px;line-height:1.25;height:28px;overflow:hidden}
+
+footer{color:#a9b7cd;font-size:11.5px;text-align:center;padding:6px 10px 0;line-height:1.6;text-shadow:0 1px 2px rgba(0,0,0,.55)}
+
+/* Mobile: cheaper blur radius; slightly darker glass keeps contrast over bright sky */
+@media (max-width:820px){
+  :root{--glass-blur:9px;--glass-bg:rgba(9,15,29,.5)}
+  .hero{grid-template-columns:1fr;padding:14px}
+  .hero-side{display:none}
+  .temp #suhu{font-size:64px}
+  .pickers{width:100%}
+  .pickers label{flex:1 1 140px;min-width:0}
+  select{min-width:0;width:100%;max-width:none}
+  .ghost{flex:0 0 auto}
+  .scene-note,.fallback{white-space:normal;max-width:92vw;text-align:center}
+}
