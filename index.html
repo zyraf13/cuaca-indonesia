@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Prakiraan cuaca resmi BMKG untuk seluruh kabupaten/kota di Indonesia, divisualkan dalam 3D.">
+<title>Cuaca Indonesia — Data Resmi BMKG</title>
+  <script type="module" crossorigin src="/cuaca-indonesia/assets/index-L3fQ75e_.js"></script>
+  <link rel="stylesheet" crossorigin href="/cuaca-indonesia/assets/index-BUU0Ahlq.css">
+</head>
+<body>
+<!-- Background layer: full-viewport 3D weather -->
+<canvas id="scene" aria-hidden="true"></canvas>
+<div id="fallback" class="fallback" hidden>Mode 2D — WebGL tidak tersedia di perangkat ini. Data tetap lengkap.</div>
+
+<!-- Foreground layer: glass panels -->
+<div class="app">
+  <header class="bar glass">
+    <div class="brand">
+      <span class="dot"></span>
+      <div>
+        <h1>Cuaca Indonesia</h1>
+        <p>Prakiraan resmi BMKG · 3 hari ke depan</p>
+      </div>
+    </div>
+    <div class="pickers">
+      <label>Provinsi
+        <select id="provinsi"></select>
+      </label>
+      <label>Kabupaten / Kota
+        <select id="kota" disabled></select>
+      </label>
+      <button id="refresh" class="ghost" type="button" title="Ambil data terbaru">Perbarui</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero glass" aria-live="polite">
+      <div class="hero-data">
+        <p id="lokasi" class="lokasi">Pilih provinsi dan kabupaten/kota.</p>
+        <div class="temp">
+          <span id="suhu">--</span><span class="deg">°C</span>
+        </div>
+        <p id="kondisi" class="kondisi">—</p>
+        <p id="waktu" class="waktu">—</p>
+        <div id="status" class="status" role="status"></div>
+      </div>
+      <div class="hero-side">
+        <p class="hint">Geser pemandangan untuk memutar 3D. Panel kaca tetap terbaca di atas langit.</p>
+      </div>
+    </section>
+
+    <section id="stats" class="stats" aria-label="Detail cuaca"></section>
+
+    <section class="timeline glass" aria-label="Prakiraan per 3 jam">
+      <div id="days" class="days" role="tablist"></div>
+      <div id="slots" class="slots"></div>
+    </section>
+  </main>
+
+  <footer>
+    Data: Badan Meteorologi, Klimatologi, dan Geofisika (BMKG) · api.bmkg.go.id ·
+    prakiraan bersifat umum, bukan peringatan dini.
+  </footer>
+</div>
+</body>
+</html>
